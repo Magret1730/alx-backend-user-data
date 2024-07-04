@@ -1,4 +1,4 @@
-#!/usr/bin/env pythoin3
+#!/usr/bin/env python3
 """
 Definition of filter_datum function that returns an obfuscated log message
 """
@@ -7,6 +7,9 @@ import mysql.connector
 import os
 import re
 from typing import List
+
+
+PII_FIELDS = ("name", "email", "phone", "password", "ip")
 
 
 def filter_datum(fields: str, redaction: str, message: str, separator: str) ->\
@@ -60,14 +63,11 @@ def get_logger() -> logging.Logger:
     logger.propagate = False
 
     formatter = RedactingFormatter(fields=PII_FIELDS)
-    stream_handler = streamHandler()
+    stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
-    logger.addhandler(stream_handler)
+    logger.addHandler(stream_handler)
 
     return logger
-
-
-PII_FIELDS = ("name", "email", "phone", "password", "ip")
 
 
 def get_db():
@@ -75,7 +75,7 @@ def get_db():
     Database connection using environment variables
     """
     username = os.environ.get('PERSONAL_DATA_DB_USERNAME', 'root')
-    password = os.environ.get('PERSONAL_DATA_DB_PASSWORD')
+    password = os.environ.get('PERSONAL_DATA_DB_PASSWORD', '')
     host = os.environ.get('PERSONAL_DATA_DB_HOST', 'localhost')
     database = os.environ.get('PERSONAL_DATA_DB_NAME')
 
@@ -85,3 +85,24 @@ def get_db():
                     host=host,
                     database=database)
     return connection
+
+
+def main():
+    """
+    Main function that retrieves all rows in the users table
+    and displays each row under a filtered format
+    """
+    logger = get_logger()
+    db = get_db()
+    if db:
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM users;")
+        for row in cursor:
+            row_str = '; '.join(f"{k}={v}" for k, v in row.items())
+            logger.info(row_str)
+        cursor.close()
+        db.close()
+
+
+if __name__ == "__main__":
+    main()
