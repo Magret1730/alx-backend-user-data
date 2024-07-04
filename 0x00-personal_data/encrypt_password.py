@@ -3,7 +3,7 @@
 import bcrypt
 
 
-def hash_password(password):
+def hash_password(password: str) -> bytes:
     """
     Function to hash password
 
@@ -21,3 +21,17 @@ def hash_password(password):
     passwrd = bcrypt.hashpw(passwrd_bytes, salt)
 
     return passwrd
+
+
+def is_valid(hashed_password: bytes, password: str) -> bool:
+    """
+    Function to check if password is correct
+    """
+
+    # encoding user password
+    userBytes = password.encode('utf-8')
+
+    # checking password
+    result = bcrypt.checkpw(userBytes, hashed_password)
+
+    return result
