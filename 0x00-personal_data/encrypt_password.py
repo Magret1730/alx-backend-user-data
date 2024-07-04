@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-""" Password hash """
+"""
+Defines a hash_password function to return a hashed password
+"""
 import bcrypt
 
 
@@ -8,7 +10,7 @@ def hash_password(password: str) -> bytes:
     Function to hash password
 
     Arg:
-    Password: password to hash
+        Password(str) : password to hash
     """
 
     # converting password to array of bytes
