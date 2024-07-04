@@ -1,8 +1,10 @@
-#!/usr/bin/env python3
+#!/usr/bin/env pythoin3
 """
 Definition of filter_datum function that returns an obfuscated log message
 """
 import logging
+import mysql.connector
+import os
 import re
 from typing import List
 
@@ -66,3 +68,20 @@ def get_logger() -> logging.Logger:
 
 
 PII_FIELDS = ("name", "email", "phone", "password", "ip")
+
+
+def get_db():
+    """
+    Database connection using environment variables
+    """
+    username = os.environ.get('PERSONAL_DATA_DB_USERNAME', 'root')
+    password = os.environ.get('PERSONAL_DATA_DB_PASSWORD')
+    host = os.environ.get('PERSONAL_DATA_DB_HOST', 'localhost')
+    database = os.environ.get('PERSONAL_DATA_DB_NAME')
+
+    connection = mysql.connector.connect(
+                    user=username,
+                    password=password,
+                    host=host,
+                    database=database)
+    return connection
