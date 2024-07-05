@@ -12,8 +12,10 @@ from typing import List
 PII_FIELDS = ("name", "email", "phone", "password", "ip")
 
 
-def filter_datum(fields: str, redaction: str, message: str, separator: str) ->\
-                                                                        str:
+def filter_datum(fields: List[str],
+                 redaction: str,
+                 message: str,
+                 separator: str) -> str:
     """
     Function that that returns the log message obfuscated
     Args:
