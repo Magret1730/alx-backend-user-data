@@ -45,4 +45,4 @@ class Auth:
         """
         Authorization for current user
         """
-        return request
+        return None
