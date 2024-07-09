@@ -53,9 +53,17 @@ class BasicAuth(Auth):
             return None, None
         if ":" not in decoded_base64_authorization_header:
             return None, None
-        email = decoded_base64_authorization_header.rsplit(":")[0]
-        password = decoded_base64_authorization_header.rsplit(":")[1]
+        # Split only on the first occurrence of ':'
+        parts = decoded_base64_authorization_header.split(':', 1)
+
+        # Check if we have exactly two parts
+        if len(parts) != 2:
+            return None, None
+
+        email, password = parts
         return email, password
+        # email = decoded_base64_authorization_header.rsplit(":")[0]
+        # password = decoded_base64_authorization_header.rsplit(":")[1]
 
     def user_object_from_credentials(self, user_email: str,
                                      user_pwd: str) -> TypeVar('User'):
