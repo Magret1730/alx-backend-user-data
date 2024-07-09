@@ -26,9 +26,14 @@ class Auth:
         for excluded_path in excluded_paths:
             if excluded_path[-1] == '/':
                 excluded_path = excluded_path[:-1]
+            # Handle wildcard matching
+            if excluded_path.endswith('*'):
+                # Remove the '*' and compare prefix
+                prefix = excluded_path[:-1]
+                if path.startswith(prefix):
+                    return False
             if path == excluded_path:
                 return False
-
         return True
 
     def authorization_header(self, request=None) -> str:
