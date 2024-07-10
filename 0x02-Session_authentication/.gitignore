@@ -1,1 +1,2 @@
 api/v1/auth/__pycache__/
+api/v1/auth/__pycache__/*.pyc
