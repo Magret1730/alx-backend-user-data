@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """ Session Authentication Module """
 from api.v1.auth.auth import Auth
-from models.user import User
+# from flask import jsonify
+# from models.user import User
 import uuid
 
 
@@ -65,11 +66,11 @@ class SessionAuth(Auth):
         session_id = self.session_cookie(request)
         if session_id is None:
             return None
-        print(f"Session_id:   {session_id}")
+        # print(f"Session_id:   {session_id}")
         user_id = self.user_id_by_session_id.get(session_id)
         if user_id is None:
             return None
-        print(f"User_id:   {user_id}")
+        # print(f"User_id:   {user_id}")
         user = User.get(user_id)
-        print(f"User:  {user}")
+        # print(f"User:  {user}")
         return user
