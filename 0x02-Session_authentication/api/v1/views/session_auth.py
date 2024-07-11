@@ -1,4 +1,4 @@
-#!/usr/bin/env pyithon3
+#!/usr/bin/env python3
 """ Session Module """
 from flask import abort, jsonify, request
 from models.user import User
