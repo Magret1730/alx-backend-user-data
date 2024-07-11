@@ -2,7 +2,7 @@
 """ Session Authentication Module """
 from api.v1.auth.auth import Auth
 # from flask import jsonify
-# from models.user import User
+from models.user import User
 import uuid
 
 
@@ -74,3 +74,21 @@ class SessionAuth(Auth):
         user = User.get(user_id)
         # print(f"User:  {user}")
         return user
+
+    def destroy_session(self, request=None):
+        """
+        Method that deletes the user session / logout
+
+        Args:
+            request (Request): The Flask request object.
+        """
+        if request is None:
+            return False
+        session_id = self.session_cookie(request)
+        if session_id is None:
+            return False
+        user_id = self.user_id_for_session_id(session_id)
+        if user_id is None:
+            return False
+        del self.user_id_by_session_id[session_id]
+        return True
