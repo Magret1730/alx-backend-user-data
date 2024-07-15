@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """ Authentication module """
 from db import DB
+from sqlalchemy.orm.exc import NoResultFound
 from user import User
 import bcrypt
 
@@ -65,3 +66,29 @@ class Auth:
         self._db.add_user(email, hashed_pwd)
 
         return new_user
+
+    def valid_login(self, email: str, password: str) -> bool:
+        """
+        Validates login
+
+        Args:
+            email(str): Email of user
+            Password(str): User's password
+
+        Return:
+            bool: True if password matches, False otherwise
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+            if user:
+                # encoding user password
+                passwrd = password.encode('utf-8')
+
+                # Get the user password from db
+                pwd = user.hashed_password
+
+                if bcrypt.checkpw(passwrd, pwd):
+                    return True
+            return False
+        except NoResultFound:
+            return False
