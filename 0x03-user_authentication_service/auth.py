@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """ Authentication module """
+from db import DB
+from user import User
 import bcrypt
 
 
@@ -23,3 +25,43 @@ def _hash_password(password: str) -> bytes:
     pwd = bcrypt.hashpw(pwd_bytes, salt)
 
     return pwd
+
+
+class Auth:
+    """Auth class to interact with the authentication database.
+    """
+
+    def __init__(self):
+        """
+        Initialization
+        """
+        self._db = DB()
+
+    def register_user(self, email: str, password: str) -> User:
+        """
+        This method registers a user in the database
+
+        Args:
+            email(str): Email of the user
+            password(str): Password of the user
+
+        Returns:
+            User object
+
+        Raises:
+            ValueError: If a user already exist with the passed email
+        """
+        existing_user = self._db.find_user_by(email=email)
+        if existing_user:
+            raise ValueError(f'User {email} already exists')
+
+        # Hash new user password
+        hashed_pwd = _hash_password(password)
+
+        # Create a new user instance
+        new_user = User(email=email, hashed_password=hashed_pwd)
+
+        # Add and commit the new user to the database
+        self._db.add_user(email, hashed_pwd)
+
+        return new_user
