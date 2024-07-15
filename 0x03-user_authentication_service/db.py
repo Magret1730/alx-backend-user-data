@@ -55,15 +55,40 @@ class DB:
         Method searches for a user
 
         Args:
-            email: arbitrary keyword argument used to search
+            kwargs: arbitrary keyword argument used to search
 
         Returns:
             The first row found in the users table
         """
         try:
-            user = self._session.query(User).filter_by(**kwargs).one()
+            user = self._session.query(User).filter_by(**kwargs).first()
             return user
         except NoResultFound:
             raise
         except InvalidRequestError:
+            raise
+
+    def update_user(self, user_id: int, **kwargs: str) -> None:
+        """
+        Method updates a user attributes as passed in the method’s
+        arguments then commit changes to the database.
+
+        Args:
+            user_id: The user's id
+            kwargs: arbitrary keyword argument used to search user to update
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: If an argument does not correspond to a user attribute
+        """
+        try:
+            user = self.find_user_by(id=user_id)
+
+            for key, value in kwargs.items():
+                if hasattr(user, key):
+                    setattr(user, key, value)
+            self._session.commit()
+        except ValueError:
             raise
