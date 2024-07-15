@@ -28,11 +28,12 @@ def _hash_password(password: str) -> bytes:
 
     return pwd
 
+
 def _generate_uuid() -> str:
-        """
-        This method returns a string representation of a new UUID created
-        """
-        return str(uuid.uuid4())
+    """
+    This method returns a string representation of a new UUID created
+    """
+    return str(uuid.uuid4())
 
 
 class Auth:
@@ -99,3 +100,22 @@ class Auth:
             return False
         except NoResultFound:
             return False
+
+    def create_session(self, email: str) -> str:
+        """
+        This method creates session based on email
+
+        Arg:
+            email(str): User's email
+
+        Return:
+            str: the session ID as a string
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+            if user:
+                user_id = _generate_uuid()
+                self._db.update_user(user.id, session_id=user_id)
+                return user_id
+        except NoResultFound:
+            return None
