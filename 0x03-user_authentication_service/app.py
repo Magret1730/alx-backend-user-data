@@ -2,7 +2,8 @@
 """ Flask app module """
 from auth import Auth
 from db import DB
-from flask import abort, Flask, jsonify, request
+from flask import abort, Flask, jsonify, redirect, request
+from sqlalchemy.orm.exc import NoResultFound
 
 app = Flask(__name__)
 AUTH = Auth()
@@ -56,8 +57,10 @@ def login() -> str:
         abort(401)
 
     session_id = AUTH.create_session(email)
+    # print(f'Session ID: {session_id}')
     response = jsonify({"email": email, "message": "logged in"})
     response.set_cookie("session_id", session_id)
+    # print(f'Response: {response}')
     return response
 
 
@@ -109,7 +112,7 @@ def profile():
 
 
 @app.route('/reset_password', methods=['POST'], strict_slashes=False)
-def reset_password():
+def get_reset_password_token():
     """
     Endpoint to handle password reset requests
     """
@@ -124,7 +127,7 @@ def reset_password():
 
 
 @app.route('/reset_password', methods=['PUT'], strict_slashes=False)
-def reset_password():
+def update_password():
     """
     Endpoint to handle password update requests
     """

@@ -86,6 +86,7 @@ class DB:
         """
         try:
             user = self.find_user_by(id=user_id)
+            # print(f'User in db: {user}')
 
             for key, value in kwargs.items():
                 if hasattr(user, key):

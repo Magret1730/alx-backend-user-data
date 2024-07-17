@@ -88,24 +88,24 @@ class Auth:
         """
         try:
             user = self._db.find_user_by(email=email)
-            # print(f"User found: {user.email}")
+            # print(f"User found in auth: {user.email}")
             if user:
                 # encoding user password
                 passwrd = password.encode('utf-8')
-                # print(f"Encoded password: {passwrd}")
+                # print(f"Encoded password in auth: {passwrd}")
                 # Get the user password from db
                 pwd = user.hashed_password
-                # print(f"DB hashed password: {pwd}")
+                # print(f"DB hashed password in auth: {pwd}")
                 if bcrypt.checkpw(passwrd, pwd):
-                    # print("Password matches")
+                    print("Password matches in auth")
                     return True
-            # print("Password does not match")
+            # print("Password does not match in auth")
             return False
         except NoResultFound:
-            # print("No user found")
+            # print("No user found in auth")
             return False
         except Exception as e:
-            # print(f"An error occurred: {e}")
+            # print(f"An error occurred in auth   : {e}")
             return False
 
     def create_session(self, email: str) -> str:
@@ -161,6 +161,7 @@ class Auth:
         """
         try:
             user = self._db.update_user(user_id, session_id=None)
+            # print(f'Destroy user session in auth: {user}')
         except ValueError:
             return None
         return None
@@ -183,7 +184,7 @@ class Auth:
         if user:
             token = _generate_uuid()
             self._db.update_user(user.id, reset_token=token)
-            return user.token
+            return token
 
     def update_password(self, reset_token: str, password: str) -> None:
         """
@@ -195,6 +196,6 @@ class Auth:
             raise ValueError
 
         if user:
-            pwd_hash = __hash_password(password)
+            pwd_hash = _hash_password(password)
             self._db.update_user(
                     user.id, hashed_password=pwd_hash, reset_token=None)
