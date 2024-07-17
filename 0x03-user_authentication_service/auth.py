@@ -165,7 +165,7 @@ class Auth:
             return None
         return None
 
-    def get_reset_password_token(email: str) -> str:
+    def get_reset_password_token(self, email: str) -> str:
         """
         Method resets password token
 
@@ -184,3 +184,17 @@ class Auth:
             token = _generate_uuid()
             self._db.update_user(user.id, reset_token=token)
             return user.token
+
+    def update_password(self, reset_token: str, password: str) -> None:
+        """
+        Method updates password
+        """
+        try:
+            user = self._db.find_user_by(reset_token=reset_token)
+        except NoResultFound:
+            raise ValueError
+
+        if user:
+            pwd_hash = __hash_password(password)
+            self._db.update_user(
+                    user.id, hashed_password=pwd_hash, reset_token=None)
