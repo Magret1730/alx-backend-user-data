@@ -88,17 +88,24 @@ class Auth:
         """
         try:
             user = self._db.find_user_by(email=email)
+            # print(f"User found: {user.email}")
             if user:
                 # encoding user password
                 passwrd = password.encode('utf-8')
-
+                # print(f"Encoded password: {passwrd}")
                 # Get the user password from db
                 pwd = user.hashed_password
-
+                # print(f"DB hashed password: {pwd}")
                 if bcrypt.checkpw(passwrd, pwd):
+                    # print("Password matches")
                     return True
+            # print("Password does not match")
             return False
         except NoResultFound:
+            # print("No user found")
+            return False
+        except Exception as e:
+            # print(f"An error occurred: {e}")
             return False
 
     def create_session(self, email: str) -> str:
@@ -131,9 +138,12 @@ class Auth:
             User or None if no session ID is found
         """
         if session_id is None:
+            # print(f'Session ID is None')
             return None
         try:
-            user = self._db.find_user_by(session_id)
+            # print(f'Auth session id,: {session_id}')
+            user = self._db.find_user_by(session_id=session_id)
+            # print(f'Auth user: {user}')
         except NoResultFound:
             return None
 

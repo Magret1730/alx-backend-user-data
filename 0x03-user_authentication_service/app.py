@@ -9,7 +9,7 @@ AUTH = Auth()
 
 
 @app.route('/', methods=['GET'], strict_slashes=False)
-def index():
+def index() -> str:
     """
     A simple route that
     returns a JSON payload of the form
@@ -18,7 +18,7 @@ def index():
 
 
 @app.route('/users', methods=['POST'], strict_slashes=False)
-def users():
+def users() -> str:
     """
     End point to register a user
 
@@ -38,7 +38,7 @@ def users():
 
 
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
-def login():
+def login() -> str:
     """
     Login session
 
@@ -47,9 +47,12 @@ def login():
         password(str): User's password
     """
     email = request.form.get('email')
+    # print(f'Email is {email}')
     password = request.form.get('password')
+    # print(f'Email is {email} and Passowrd is {password}')
 
     if not AUTH.valid_login(email, password):
+        # print(f'Aborting.....')
         abort(401)
 
     session_id = AUTH.create_session(email)
@@ -80,6 +83,28 @@ def logout():
         else:
             abort(403)
     except NoResultFound:
+        abort(403)
+
+
+@app.route('/profile', methods=['GET'], strict_slashes=False)
+def profile():
+    """
+    The method request is expected to contain a session_id cookie
+    """
+    try:
+        session_id = request.cookies.get('session_id')
+        # print(f'Session ID: {session_id}')
+        if not session_id:
+            abort(403)
+
+        user = AUTH.get_user_from_session_id(session_id)
+        # print(f'User: {user}')
+        if user:
+            return jsonify({"email": user.email}), 200
+        else:
+            # print(f'Aborting...')
+            abort(403)
+    except Exception:
         abort(403)
 
 

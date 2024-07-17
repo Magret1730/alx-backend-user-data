@@ -62,6 +62,7 @@ class DB:
         """
         try:
             user = self._session.query(User).filter_by(**kwargs).first()
+            # print(f'DB user: {user}')
             return user
         except NoResultFound:
             raise
