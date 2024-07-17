@@ -120,7 +120,7 @@ class Auth:
         except NoResultFound:
             return None
 
-    def get_user_from_session_id(session_id: str) -> User:
+    def get_user_from_session_id(self, session_id: str) -> User:
         """
         Method that finds user by session ID
 
@@ -133,9 +133,24 @@ class Auth:
         if session_id is None:
             return None
         try:
-            user = DB.find_user_by(session_id)
+            user = self._db.find_user_by(session_id)
         except NoResultFound:
-            return None:
+            return None
 
         return user
 
+    def destroy_session(self, user_id: int) -> None:
+        """
+        Method that updates the corresponding user’s session ID to None
+
+        Args:
+            user_id(int): User ID
+
+        Returns:
+            None
+        """
+        try:
+            user = self._db.update_user(user_id, session_id=None)
+        except ValueError:
+            return None
+        return None
